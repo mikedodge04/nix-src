@@ -710,6 +710,16 @@ struct CmdFlakeInitCommon : virtual Args, EvalCommand, MixFlakeSchemas
             for (auto & s : changedFiles)
                 args.emplace_back(s.native());
             runProgram("git", true, args);
+        } else if (!changedFiles.empty() && std::filesystem::exists(std::filesystem::path{flakeDir} / ".sl")) {
+            OsStrings args = {
+                OS_STR("--cwd"),
+                flakeDir.native(),
+                OS_STR("add"),
+                OS_STR("--"),
+            };
+            for (auto & s : changedFiles)
+                args.emplace_back(s.native());
+            runProgram("sl", true, args);
         }
 
         if (auto welcomeText = cursor->maybeGetAttr("welcomeText")) {

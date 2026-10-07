@@ -100,6 +100,7 @@ suites = [
       'fetchGitVerification.sh',
       'fetchMercurial.sh',
       'fetchPath.sh',
+      'fetchSapling.sh',
       'fetchTree-file.sh',
       'fetchurl.sh',
       'filter-source.sh',

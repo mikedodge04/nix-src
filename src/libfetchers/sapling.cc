@@ -103,8 +103,8 @@ struct SaplingWorkdir
             repoPath,
             {OS_STR("status"), OS_STR("--modified"), OS_STR("--added"), OS_STR("--removed"), OS_STR("--deleted")});
 
-        auto head =
-            runSl(repoPath, {OS_STR("log"), OS_STR("-r"), OS_STR("."), OS_STR("-T"), OS_STR("{node} {activebookmark}")});
+        auto head = runSl(
+            repoPath, {OS_STR("log"), OS_STR("-r"), OS_STR("."), OS_STR("-T"), OS_STR("{node} {activebookmark}")});
         auto [node, bookmark] = splitOnce(head, ' ');
 
         SaplingWorkdir wd{
@@ -392,8 +392,8 @@ struct SaplingInputScheme : InputScheme
                 dumpPath(absPath, hashSink);
         }
 
-        return GitAccessorOptions{}.makeFingerprint(wd.headRev) + ";sl;d="
-               + hashSink.finish().hash.to_string(HashFormat::Base16, false);
+        return GitAccessorOptions{}.makeFingerprint(wd.headRev)
+               + ";sl;d=" + hashSink.finish().hash.to_string(HashFormat::Base16, false);
     }
 
     bool isLocked(const Settings & settings, const Input & input) const override

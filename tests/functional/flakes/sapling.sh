@@ -52,6 +52,10 @@ nix flake metadata --json "sl+file://$flake2Dir" | jq -e '.lastModified > 0'
 
 nix build -o "$TEST_ROOT/result" "sl+file://$flake2Dir" --no-registries --no-allow-dirty
 
+# The active bookmark is locked as `ref`.
+sl bookmark --cwd "$flake2Dir" feature
+[[ $(nix flake metadata --json "sl+file://$flake2Dir" | jq -r .locked.ref) = feature ]]
+
 # A plain path into a Sapling working copy resolves to `sl+file`.
 [[ $(nix flake metadata --json "$flake2Dir" | jq -r .resolvedUrl) = "sl+file://$flake2Dir" ]]
 [[ $(nix flake metadata --json "$flake2Dir" | jq -r .revision) = "$rev" ]]
@@ -64,3 +68,22 @@ slCommit "$flake2Dir" 'Remove lock file'
 nix flake lock "$flake2Dir" --commit-lock-file
 [[ -z $(sl status --cwd "$flake2Dir" --modified --added --removed) ]]
 sl files --cwd "$flake2Dir" flake.lock
+
+# `nix flake init` adds the new files to a Sapling working copy.
+templateDir=$TEST_ROOT/sl-template
+mkdir -p "$templateDir/trivial"
+cat > "$templateDir/flake.nix" <<EOF2
+{
+  outputs = { self }: {
+    templates.default.path = ./trivial;
+    templates.default.description = "trivial";
+  };
+}
+EOF2
+echo '{ outputs = { self }: { }; }' > "$templateDir/trivial/flake.nix"
+
+initDir=$TEST_ROOT/sl-init
+mkdir -p "$initDir"
+slInit "$initDir"
+(cd "$initDir" && nix flake init -t "path:$templateDir")
+[[ $(sl status --cwd "$initDir" --added --no-status) = flake.nix ]]
