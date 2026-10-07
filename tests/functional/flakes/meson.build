@@ -7,6 +7,7 @@ suites += {
     'edit.sh',
     'run.sh',
     'mercurial.sh',
+    'sapling.sh',
     'circular.sh',
     'init.sh',
     'inputs.sh',

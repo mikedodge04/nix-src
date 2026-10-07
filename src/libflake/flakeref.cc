@@ -179,7 +179,7 @@ std::pair<FlakeRef, std::string> parsePathFlakeRefWithFragment(
                     if (pathExists(path / "flake.nix")) {
                         found = true;
                         break;
-                    } else if (pathExists(path / ".git"))
+                    } else if (pathExists(path / ".git") || pathExists(path / ".sl"))
                         throw Error(
                             "path %s is not part of a flake (neither it nor its parent directories contain a 'flake.nix' file)",
                             PathFmt(path));
@@ -201,9 +201,10 @@ std::pair<FlakeRef, std::string> parsePathFlakeRefWithFragment(
             std::string subdir;
 
             while (flakeRoot.parent_path() != flakeRoot) {
-                if (pathExists(flakeRoot / ".git")) {
+                auto isGit = pathExists(flakeRoot / ".git");
+                if (isGit || pathExists(flakeRoot / ".sl")) {
                     auto parsedURL = ParsedURL{
-                        .scheme = "git+file",
+                        .scheme = isGit ? "git+file" : "sl+file",
                         .authority = ParsedURL::Authority{},
                         .path = pathToUrlPath(flakeRoot),
                         .query = query,

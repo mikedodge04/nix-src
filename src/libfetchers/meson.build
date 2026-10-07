@@ -51,6 +51,7 @@ sources = files(
   'path.cc',
   'provenance.cc',
   'registry.cc',
+  'sapling.cc',
   'tarball.cc',
 )
 

@@ -10,6 +10,7 @@
   jq,
   git,
   mercurial,
+  sapling,
   python3,
   unixtools,
   util-linux,
@@ -58,6 +59,7 @@ mkMesonDerivation (
       jq
       git
       mercurial
+      sapling
       # For the OpenTelemetry collector in `otel.sh`.
       python3
       unixtools.script
